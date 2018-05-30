@@ -147,7 +147,8 @@ class Article(object):
         downloading articles
         """
         if html is None:
-            html = network.get_html(self.url, self.config)
+            html,redirect_url = network.get_html(self.url, self.config)
+	    self.url = redirect_url
         self.set_html(html)
 
     def parse(self):

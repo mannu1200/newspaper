@@ -42,27 +42,28 @@ def get_html(url, config=None, response=None):
     config = config or Configuration()
     useragent = config.browser_user_agent
     timeout = config.request_timeout
-
+    redirect_url = u''
     if response is not None:
         if response.encoding != FAIL_ENCODING:
-            return response.text
-        return response.content
+            return response.text, redirect_url
+        return response.content, redirect_url
 
     try:
         html = None
         response = requests.get(url=url,
                                 **get_request_kwargs(timeout, useragent))
+	redirect_url = response.url
         if response.encoding != FAIL_ENCODING:
             html = response.text
         else:
             html = response.content
         if html is None:
             html = u''
-        return html
+        return html, redirect_url
 
     except Exception, e:
         log.debug('%s on %s' % (e, url))
-        return u''
+        return u'', redirect_url
 
 
 class MRequest(object):
